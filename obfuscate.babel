@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<!--
+	Babel Obfuscator MSBuild Project File
+	Version 10.1.0.0
+-->
+<Project DefaultTargets="TrialLicense" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <UsingTask TaskName="Babel" AssemblyName="Babel.Build, Version=10.1.0.0, Culture=neutral, PublicKeyToken=138d17b5bd621ab7" />
+  <Target Name="TrialLicense">
+    <PropertyGroup>
+      <BabelInputFile>bin\Debug\net7.0\TrialLicense.dll</BabelInputFile>
+      <BabelOutputFile>bin\Debug\net7.0\TrialLicense.dll</BabelOutputFile>
+      <CleanAttributes>false</CleanAttributes>
+      <ConstRemoval>true</ConstRemoval>
+      <ControlFlowObfuscation>goto=true;switch=true;case=true;if=true;call=false;value=false;token=false;underflow=false;true</ControlFlowObfuscation>
+      <CopyAttributes>true</CopyAttributes>
+      <DeadCodeElimination>true</DeadCodeElimination>
+      <DependenciesManifest>true</DependenciesManifest>
+      <DynamicProxy>None</DynamicProxy>
+      <EnableObfuscationAgent>true</EnableObfuscationAgent>
+      <EnumRemoval>true</EnumRemoval>
+      <FlattenNamespaces>true</FlattenNamespaces>
+      <GenerateDebug>false</GenerateDebug>
+      <ILIterations>3</ILIterations>
+      <Internalize>true</Internalize>
+      <MsilEncryption>true</MsilEncryption>
+      <ObfuscateEvents>true</ObfuscateEvents>
+      <ObfuscateFields>true</ObfuscateFields>
+      <ObfuscateMethods>true</ObfuscateMethods>
+      <ObfuscateParameters>true</ObfuscateParameters>
+      <ObfuscateProperties>true</ObfuscateProperties>
+      <ObfuscateTypes>true</ObfuscateTypes>
+      <ObfuscateXaml>false</ObfuscateXaml>
+      <OverloadedRenaming>false</OverloadedRenaming>
+      <ResourceEncryption>true</ResourceEncryption>
+      <SealClasses>true</SealClasses>
+      <SearchSatelliteAssemblies>true</SearchSatelliteAssemblies>
+      <ShowLogo>true</ShowLogo>
+      <ShowStatistics>true</ShowStatistics>
+      <StringEncryption>hash</StringEncryption>
+      <SuppressReflection>false</SuppressReflection>
+      <UnicodeNormalization>false</UnicodeNormalization>
+      <ValueEncryption>int32=true;int64=true;single=true;double=true;array=true;true</ValueEncryption>
+      <VerboseLevel>1</VerboseLevel>
+      <VirtualFunctions>true</VirtualFunctions>
+    </PropertyGroup>
+    <ItemGroup>
+      <MergeAssembly Remove="@(MergeAssembly)" />
+      <MergeAssembly Include="bin\Debug\net7.0\Babel.Licensing.dll" />
+    </ItemGroup>
+    <Message Text="Obfuscating $(BabelInputFile)..." />
+    <Babel CleanAttributes="$(CleanAttributes)" ConstRemoval="$(ConstRemoval)" ControlFlowObfuscation="$(ControlFlowObfuscation)" CopyAttributes="$(CopyAttributes)" DeadCodeElimination="$(DeadCodeElimination)" DependenciesManifest="$(DependenciesManifest)" DynamicProxy="$(DynamicProxy)" EnableObfuscationAgent="$(EnableObfuscationAgent)" EnumRemoval="$(EnumRemoval)" FlattenNamespaces="$(FlattenNamespaces)" GenerateDebug="$(GenerateDebug)" ILIterations="$(ILIterations)" InputFile="$(BabelInputFile)" Internalize="$(Internalize)" MergeAssemblies="@(MergeAssembly)" MsilEncryption="$(MsilEncryption)" ObfuscateEvents="$(ObfuscateEvents)" ObfuscateFields="$(ObfuscateFields)" ObfuscateMethods="$(ObfuscateMethods)" ObfuscateParameters="$(ObfuscateParameters)" ObfuscateProperties="$(ObfuscateProperties)" ObfuscateTypes="$(ObfuscateTypes)" ObfuscateXaml="$(ObfuscateXaml)" OutputFile="$(BabelOutputFile)" OverloadedRenaming="$(OverloadedRenaming)" ResourceEncryption="$(ResourceEncryption)" SealClasses="$(SealClasses)" SearchSatelliteAssemblies="$(SearchSatelliteAssemblies)" ShowLogo="$(ShowLogo)" ShowStatistics="$(ShowStatistics)" StringEncryption="$(StringEncryption)" SuppressReflection="$(SuppressReflection)" UnicodeNormalization="$(UnicodeNormalization)" ValueEncryption="$(ValueEncryption)" VerboseLevel="$(VerboseLevel)" VirtualFunctions="$(VirtualFunctions)" />
+  </Target>
+</Project>
