@@ -4,7 +4,7 @@
 	Version 10.1.0.0
 -->
 <Project DefaultTargets="TrialLicense" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <UsingTask TaskName="Babel" AssemblyName="Babel.Build, Version=10.1.0.0, Culture=neutral, PublicKeyToken=138d17b5bd621ab7" />
+  <UsingTask TaskName="Babel" AssemblyName="Babel.Build, Version=10.7.0.0, Culture=neutral, PublicKeyToken=138d17b5bd621ab7" />
   <Target Name="TrialLicense">
     <PropertyGroup>
       <BabelInputFile>bin\Debug\net7.0\TrialLicense.dll</BabelInputFile>

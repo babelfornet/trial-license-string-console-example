@@ -2,13 +2,23 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Babel.Licensing" Version="10.0.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Babel.Licensing" Version="10.7.0" />
+    <PackageReference Include="Babel.Obfuscator" Version="10.7.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
+
+  <PropertyGroup>
+    <BabelLicense>$(BABEL_LICENSE)</BabelLicense>
+    <MsilEncryption>true</MsilEncryption>
+  </PropertyGroup>
 
 </Project>

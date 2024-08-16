@@ -3,14 +3,10 @@ using System.Reflection;
 using System.Runtime.Versioning;
 using Babel.Licensing;
 
-using Microsoft.Win32;
+using Newtonsoft.Json;
 
-[SupportedOSPlatform("windows")]
 class Program
 {
-
-    static string RegistryKey = @"SOFTWARE\TrialLicenseExample";
-
     /// <summary>
     /// Public key used to validate the license signature.
     /// </summary>
@@ -79,9 +75,7 @@ class Program
         }
         catch (Exception ex)
         {
-            Console.WriteLine("Exception {0} thrown: {1}", ex, ex.Message);
-            
-            // Report the exception to the Babel Licensing Service            
+            Console.WriteLine("Exception {0} thrown: {1}", ex, ex.Message);            
         }
     }
 
@@ -121,10 +115,9 @@ class Program
         // Convert the license object to an ASCII string
         string serial = lic.ToReadableString("ASCII");
 
-        // Store the serial in the registry with the public key
-        using var reg = Registry.CurrentUser.CreateSubKey(RegistryKey, true);
-        reg.SetValue("Serial", serial);
-        reg.SetValue("Key", sign.ExportKeys(true).Encrypt("pk_p@sswOrd"));
+        // Save the current license information to a specified file path        
+        var store = new LicenseStore(serial, sign.ExportKeys(true).Encrypt("pk_p@sswOrd"));
+        store.Save();
 
         Console.WriteLine("Serial created:");
         Console.WriteLine(serial);
@@ -132,11 +125,16 @@ class Program
 
     public void ValidateSerial()
     {
-        using var reg = Registry.CurrentUser.OpenSubKey(RegistryKey);
-        string serial = Convert.ToString(reg?.GetValue("Serial"));
+        var store = new LicenseStore();
+        store.Load();
+        if (store.Serial == null)
+        {
+            Console.WriteLine("No serial found");
+            return;
+        }
 
         // Get the public key from the key to validate the license signature
-        string publicKey = Convert.ToString(reg?.GetValue("Key")).Decrypt("pk_p@sswOrd");
+        string publicKey = Convert.ToString(store.Key).Decrypt("pk_p@sswOrd");
 
         var manager = new StringLicenseManager();
 
@@ -145,7 +143,7 @@ class Program
 
         // Validate the serial
         // A license object is returned if the serial is valid and all license restrictions are met
-        Babel.Licensing.ILicense license = manager.Validate(serial);
+        Babel.Licensing.ILicense license = manager.Validate(store.Serial);
 
         Console.WriteLine("Serial {0} is valid", license.Id);
         var trial = license.Restrictions.OfType<TrialRestriction>().FirstOrDefault();
@@ -159,8 +157,7 @@ class Program
     
     private void DeleteSerial()
     {
-        Registry.CurrentUser.DeleteSubKeyTree(RegistryKey, false);
-
+        new LicenseStore().Delete();
         Console.WriteLine("Serial deleted");
     }
     
@@ -173,11 +170,16 @@ class Program
     [Obfuscation(Feature = "msil encryption", Exclude = false)]
     private static string EncryptedGetEncryptedCodePassword(string source)
     {
-        using var reg = Registry.CurrentUser.OpenSubKey(RegistryKey);
-        string serial = Convert.ToString(reg?.GetValue("Serial"));
+        var store = new LicenseStore();
+        store.Load();
+
+        if (store.Serial == null)
+        {
+            throw new Exception("No serial found");
+        }
 
         // Get the public key from the key to validate the license signature
-        string publicKey = Convert.ToString(reg?.GetValue("Key")).Decrypt("pk_p@sswOrd");
+        string publicKey = Convert.ToString(store.Key).Decrypt("pk_p@sswOrd");
 
         var manager = new StringLicenseManager();
 
@@ -186,9 +188,43 @@ class Program
 
         // Validate the serial
         // A license object is returned if the serial is valid and all license restrictions are met
-        Babel.Licensing.ILicense license = manager.Validate(serial);
+        Babel.Licensing.ILicense license = manager.Validate(store.Serial);
 
         // Reuse the same secret used to decrypt the code password
         return license.Fields.First(item => item.Name == source).Value.Decrypt("!sEcr3tp@sswOrD!");
+    }
+}
+
+class LicenseStore {
+    public string Serial { get; set; }
+    public string Key { get; set; }
+
+    public LicenseStore() {
+    }
+
+    public LicenseStore(string serial, string key) {
+        Serial = serial;
+        Key = key;
+    }
+
+    public void Save() {
+        File.WriteAllText("license.json", JsonConvert.SerializeObject(this));
+    }
+
+    public void Load() {
+        try {
+            var store = JsonConvert.DeserializeObject<LicenseStore>(File.ReadAllText("license.json"));
+            Serial = store.Serial;
+            Key = store.Key;
+        } catch {
+            Serial = null;
+            Key = null;
+        }
+    }
+
+    public void Delete() {
+        try {
+            File.Delete("license.json");
+        } catch { }
     }
 }
